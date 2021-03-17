@@ -11,14 +11,14 @@ server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 server.bind(("", 12000))
 
 while True:
-    print('Waiting for a msg from clients...')
+    print('Esperando por clients...')
     msg_bytes, address_ip_client = server.recvfrom(248)
     msg_received_str = msg_bytes.decode()
     msg_received_int = int(msg_received_str)
 
     if msg_received_str != "":
         integer_length = int(math.log10(msg_received_int))+1
-        print("Tamanho do numero recebido do client: " + str(integer_length))
+        print("Numero recebido do client: " + str(msg_received_int) + " | Ip do client: " +str(address_ip_client)+ " | Tamanho do numero recebido do client: " + str(integer_length))
         
         if integer_length > 10: # se menor qu 10
             msg_to_answer = random_str(str_length = integer_length)
@@ -35,3 +35,4 @@ while True:
         msg_bytes, address_ip_client = server.recvfrom(248)
         msg_received_str = msg_bytes.decode()
         print("Mensagem recebida do client: " + msg_received_str)
+        print("#"*130)
