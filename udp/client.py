@@ -9,15 +9,18 @@ def get_random_number(begin_number, number_of_decimal_places):
     return random_integer
 
 while True:
+    msg_to_send = ""
+    msg_received_str = ""
+
     client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     
     random_integer_to_send = get_random_number(
         begin_number = 1, 
-        number_of_decimal_places = 30
+        number_of_decimal_places = random.randrange(1,30)
     )
 
     msg_to_send = str(random_integer_to_send)
-    print("Número randomico gerado enviado para o server: "+ msg_to_send)
+    print("Numero randomico gerado enviado para o server: "+ msg_to_send)
     
     client.sendto(msg_to_send.encode(), ("localhost", 12000))
     msg_received_bytes, address_ip_server = client.recvfrom(2048)
