@@ -11,10 +11,6 @@ def get_random_number(begin_number, number_of_decimal_places):
 while True:
     msg_to_send = ""
     msg_received_str = ""
-
-    #AF_INET indica que e um protocolo de endereco IP
-    #SOCK_DGRAM indica que e um protocolo da camada de transporte UDP
-    client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     
     random_integer_to_send = get_random_number(
         begin_number = 1, 
@@ -23,15 +19,21 @@ while True:
 
     msg_to_send = str(random_integer_to_send)
     print("Numero randomico gerado enviado para o server: "+ msg_to_send)
-    
-    client.sendto(msg_to_send.encode(), ("localhost", 12000))
-    msg_received_bytes, address_ip_server = client.recvfrom(2048)
-    msg_received_str = msg_received_bytes.decode()
+
+    #AF_INET indica que e um protocolo de endereco IP
+    #SOCK_STREAM indica que e um protocolo da camada de transporte TCP
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.connect(("localhost", 12000))
+    # client.send(bytes(msg_to_send, "utf-8"))
+    client.send(msg_to_send.encode("utf-8"))
+
+    msg_received_bytes = client.recv(1024)
+    msg_received_str = msg_received_bytes.decode("utf-8")
     print("Mensagem recebida do server: "+ msg_received_str)
 
     msg_to_send = msg_received_str + " FIM "
     print("Mensagem enviada para o server: " + msg_to_send)
-    client.sendto(msg_to_send.encode(), ("localhost", 12000))
+    client.send(msg_to_send.encode("utf-8"))
     
     #fecha o socket e da um delay de 30seg
     client.close()
