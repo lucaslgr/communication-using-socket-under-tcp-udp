@@ -24,7 +24,7 @@ while True:
     print("Servidor recebeu a conexao do cliente com endereco: " + str(address))
 
     msg_bytes = socketConnection.recv(1024)
-    clientHost, clientPort = socketConnection.getpeername();
+    clientHost, clientPort = socketConnection.getpeername()
     msg_received_str = msg_bytes.decode("utf-8")
     msg_received_int = int(msg_received_str)
 

@@ -24,7 +24,6 @@ while True:
     #SOCK_STREAM indica que e um protocolo da camada de transporte TCP
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect(("localhost", 12000))
-    # client.send(bytes(msg_to_send, "utf-8"))
     client.send(msg_to_send.encode("utf-8"))
 
     msg_received_bytes = client.recv(1024)
