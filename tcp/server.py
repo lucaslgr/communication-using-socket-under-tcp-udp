@@ -3,6 +3,10 @@ import math
 import random
 import string
 
+# contadores de pacotes recebidos e enviados
+counter_received = 0
+counter_sent = 0
+
 # funcao para gerar string randomica de tamanho especifico
 def random_str(chars = string.ascii_letters + string.digits, str_length=10):
 	return ''.join(random.choice(chars) for _ in range(str_length))
@@ -24,6 +28,8 @@ while True:
     print("Servidor recebeu a conexao do cliente com endereco: " + str(address))
 
     msg_bytes = socketConnection.recv(1024)
+    counter_received += 1
+
     clientHost, clientPort = socketConnection.getpeername()
     msg_received_str = msg_bytes.decode("utf-8")
     msg_received_int = int(msg_received_str)
@@ -44,9 +50,14 @@ while True:
                 msg_to_answer = 'IMPAR'
 
         socketConnection.send(msg_to_answer.encode("utf-8"))
+        counter_sent += 1
+        
         print("Mensagem enviada para o cliente: " +  msg_to_answer)
 
         msg_bytes = socketConnection.recv(1024)
+        counter_received += 1
+
         msg_received_str = msg_bytes.decode("utf-8")
         print("Mensagem recebida do cliente: " + msg_received_str)
+        print("Numero de pacotes [enviados] | [recebidos]: "+ str(counter_sent) +" | "+ str(counter_received))
         print("#"*67)
