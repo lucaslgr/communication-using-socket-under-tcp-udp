@@ -19,6 +19,9 @@ NUM_LOOPS = 20
 #const num de delay em segundos
 NUM_DELAY_SECONDS = 10
 
+#const num de bytes para pacotes recebidos
+NUM_BYTES_PACKAGES_RECEIVED = 248
+
 def utf8_str_bytes(str):
     return len(str.encode('utf-8'))
 
@@ -47,7 +50,7 @@ while True and (counter_loop < NUM_LOOPS):
     client.sendto(msg_to_send.encode(), ("localhost", SERVER_PORT)) 
     counter_sent += 1
 
-    msg_received_bytes, address_ip_server = client.recvfrom(2048)
+    msg_received_bytes, address_ip_server = client.recvfrom(NUM_BYTES_PACKAGES_RECEIVED)
     counter_received += 1
     msg_received_str = msg_received_bytes.decode()
     counter_bytes_received += utf8_str_bytes(msg_received_str)
@@ -69,6 +72,7 @@ while True and (counter_loop < NUM_LOOPS):
     for i in range(NUM_DELAY_SECONDS):
         print(str(i+1)+ "seg...")
         time.sleep(1)
+    #time.sleep(NUM_DELAY_SECONDS)
 
     #contador de loop
     counter_loop += 1

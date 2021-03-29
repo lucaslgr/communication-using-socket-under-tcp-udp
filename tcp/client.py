@@ -19,6 +19,9 @@ NUM_LOOPS = 20
 #const num de delay em segundos
 NUM_DELAY_SECONDS = 1
 
+#const num de bytes para pacotes recebidos
+NUM_BYTES_PACKAGES_RECEIVED = 248
+
 def utf8_str_bytes(str):
     return len(str.encode('utf-8'))
 
@@ -50,7 +53,7 @@ while True and (counter_loop < NUM_LOOPS):
     client.send(msg_to_send.encode("utf-8"))
     counter_sent += 1
 
-    msg_received_bytes = client.recv(1024)
+    msg_received_bytes = client.recv(NUM_BYTES_PACKAGES_RECEIVED)
     counter_received += 1
     msg_received_str = msg_received_bytes.decode("utf-8")
     counter_bytes_received += utf8_str_bytes(msg_received_str)

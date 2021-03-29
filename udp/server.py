@@ -14,6 +14,9 @@ counter_bytes_sent = 0
 #const para definir a porta do server
 SERVER_PORT = 16000
 
+#const num de bytes para pacotes recebidos
+NUM_BYTES_PACKAGES_RECEIVED = 248
+
 def utf8_str_bytes(str):
     return len(str.encode('utf-8'))
 
@@ -31,7 +34,7 @@ while True:
     msg_received_str = ""
 
     print('Esperando por clientes...')
-    msg_bytes, address_ip_client = server.recvfrom(248)
+    msg_bytes, address_ip_client = server.recvfrom(NUM_BYTES_PACKAGES_RECEIVED)
     counter_received += 1
     msg_received_str = msg_bytes.decode()
     counter_bytes_received += utf8_str_bytes(msg_received_str)
@@ -57,7 +60,7 @@ while True:
         counter_sent += 1
         print("Mensagem enviada para o cliente: " +  msg_to_answer)
 
-        msg_bytes, address_ip_client = server.recvfrom(248)
+        msg_bytes, address_ip_client = server.recvfrom(NUM_BYTES_PACKAGES_RECEIVED)
         counter_received += 1
         msg_received_str = msg_bytes.decode()
         counter_bytes_received += utf8_str_bytes(msg_received_str)

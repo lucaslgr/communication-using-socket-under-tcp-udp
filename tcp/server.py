@@ -14,6 +14,9 @@ counter_bytes_sent = 0
 #const para definir a porta do server
 SERVER_PORT = 12000
 
+#const num de bytes para pacotes recebidos
+NUM_BYTES_PACKAGES_RECEIVED = 248
+
 def utf8_str_bytes(str):
     return len(str.encode('utf-8'))
 
@@ -37,7 +40,7 @@ while True:
     socketConnection, address = server.accept()
     print("Servidor recebeu a conexao do cliente com endereco: " + str(address))
 
-    msg_bytes = socketConnection.recv(1024)
+    msg_bytes = socketConnection.recv(NUM_BYTES_PACKAGES_RECEIVED)
     counter_received += 1
     clientHost, clientPort = socketConnection.getpeername()
     msg_received_str = msg_bytes.decode("utf-8")
@@ -65,7 +68,7 @@ while True:
         
         print("Mensagem enviada para o cliente: " +  msg_to_answer)
 
-        msg_bytes = socketConnection.recv(1024)
+        msg_bytes = socketConnection.recv(NUM_BYTES_PACKAGES_RECEIVED)
         counter_received += 1
         msg_received_str = msg_bytes.decode("utf-8")
         counter_bytes_received += utf8_str_bytes(msg_received_str)
