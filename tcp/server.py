@@ -2,10 +2,18 @@ import socket
 import math
 import random
 import string
+import sys
 
 # contadores de pacotes recebidos e enviados
 counter_received = 0
 counter_sent = 0
+
+#contabilizadores de num de bytes enviados e recebidos
+counter_bytes_received = 0
+counter_bytes_sent = 0
+
+#const para definir a porta do server
+SERVER_PORT = 12000
 
 # funcao para gerar string randomica de tamanho especifico
 def random_str(chars = string.ascii_letters + string.digits, str_length=10):
@@ -14,7 +22,7 @@ def random_str(chars = string.ascii_letters + string.digits, str_length=10):
 #AF_INET indica que e um protocolo de endereco IP
 #SOCK_STREAM indica que e um protocolo da camada de transporte TCP
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(("localhost", 12000))
+server.bind(("localhost", SERVER_PORT))
 
 server.listen(5)  
 
@@ -29,9 +37,9 @@ while True:
 
     msg_bytes = socketConnection.recv(1024)
     counter_received += 1
-
     clientHost, clientPort = socketConnection.getpeername()
     msg_received_str = msg_bytes.decode("utf-8")
+    counter_bytes_received += sys.getsizeof(msg_received_str)
     msg_received_int = int(msg_received_str)
 
     if msg_received_str != "":
@@ -49,6 +57,7 @@ while True:
             else:
                 msg_to_answer = 'IMPAR'
 
+        counter_bytes_sent += sys.getsizeof(msg_to_answer)
         socketConnection.send(msg_to_answer.encode("utf-8"))
         counter_sent += 1
         
@@ -56,8 +65,10 @@ while True:
 
         msg_bytes = socketConnection.recv(1024)
         counter_received += 1
-
         msg_received_str = msg_bytes.decode("utf-8")
+        counter_bytes_received += sys.getsizeof(msg_received_str)
+
         print("Mensagem recebida do cliente: " + msg_received_str)
-        print("Numero de pacotes [enviados] | [recebidos]: "+ str(counter_sent) +" | "+ str(counter_received))
+        print("Numero de PACOTES [enviados] | [recebidos]: "+ str(counter_sent) +" | "+ str(counter_received))
+        print("Numero de BYTES [enviados] | [recebidos]: " + str(counter_bytes_sent) +" | "+ str(counter_bytes_received))
         print("#"*67)
