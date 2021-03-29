@@ -2,7 +2,6 @@ import socket
 import math
 import random
 import string
-import sys
 
 # contadores de pacotes recebidos e enviados
 counter_received = 0
@@ -14,6 +13,9 @@ counter_bytes_sent = 0
 
 #const para definir a porta do server
 SERVER_PORT = 12000
+
+def utf8_str_bytes(str):
+    return len(str.encode('utf-8'))
 
 # funcao para gerar string randomica de tamanho especifico
 def random_str(chars = string.ascii_letters + string.digits, str_length=10):
@@ -39,7 +41,7 @@ while True:
     counter_received += 1
     clientHost, clientPort = socketConnection.getpeername()
     msg_received_str = msg_bytes.decode("utf-8")
-    counter_bytes_received += sys.getsizeof(msg_received_str)
+    counter_bytes_received += utf8_str_bytes(msg_received_str)
     msg_received_int = int(msg_received_str)
 
     if msg_received_str != "":
@@ -57,7 +59,7 @@ while True:
             else:
                 msg_to_answer = 'IMPAR'
 
-        counter_bytes_sent += sys.getsizeof(msg_to_answer)
+        counter_bytes_sent += utf8_str_bytes(msg_to_answer)
         socketConnection.send(msg_to_answer.encode("utf-8"))
         counter_sent += 1
         
@@ -66,7 +68,7 @@ while True:
         msg_bytes = socketConnection.recv(1024)
         counter_received += 1
         msg_received_str = msg_bytes.decode("utf-8")
-        counter_bytes_received += sys.getsizeof(msg_received_str)
+        counter_bytes_received += utf8_str_bytes(msg_received_str)
 
         print("Mensagem recebida do cliente: " + msg_received_str)
         print("Numero de PACOTES [enviados] | [recebidos]: "+ str(counter_sent) +" | "+ str(counter_received))
