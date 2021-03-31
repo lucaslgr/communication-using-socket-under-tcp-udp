@@ -33,6 +33,9 @@ class Client (threading.Thread):
     #const num de delay em segundos
     NUM_DELAY_SECONDS = 1
 
+    #const num de segs para Timout
+    TIMOUT_SECONDS = 1
+
     #constructor
     def __init__(self, client_id, server_ip = "localhost", server_port = 12000):
         #identificador do client
@@ -67,23 +70,51 @@ class Client (threading.Thread):
         #SOCK_STREAM indica que e um protocolo da camada de transporte TCP
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         #setando o limite de timout do cliente
-        client.settimeout(100)
-
-        client.connect((self.server_ip, self.server_port))
+        client.settimeout(self.TIMOUT_SECONDS)
+        
+        while True:
+            try:
+                client.connect((self.server_ip, self.server_port))
+                break
+            except socket.gaierror as error:
+                print("ERROR: Endereco de IP do server eh invalido ou nao pode ser alcancado")
+                #print(error)
+            except socket.timeout as error:
+                print("ERROR: Timeout o server ultrapassou "+str(self.TIMOUT_SECONDS)+" segundo(s) para responder")
+                #print(error)
+            except socket.error as error:
+                print("ERROR" + error)
+            print("Tentando uma nova conexao...")
 
         random_integer_to_send = get_random_number(
             begin_number=1,
             number_of_decimal_places=random.randrange(1, 30)
         )
-
         msg_to_send = str(random_integer_to_send)
         print("Cliente: " +str(self.client_id)+ " Numero randomico gerado enviado para o server: " + msg_to_send)
-
         self.counter_bytes_sent += utf8_str_bytes(msg_to_send)
         client.send(msg_to_send.encode("utf-8"))
         self.counter_sent += 1
 
-        msg_received_bytes = client.recv(self.NUM_BYTES_PACKAGES_RECEIVED)
+        
+        msg_received_bytes = None
+        while True:
+            try:
+                msg_received_bytes = client.recv(self.NUM_BYTES_PACKAGES_RECEIVED)
+            except socket.gaierror as error:
+                print("ERROR: Endereco de IP do server eh invalido ou nao pode ser alcancado")
+                #print(error)
+                #client.close()
+            except socket.timeout as error:
+                print("ERROR: Timeout o server ultrapassou "+str(self.TIMOUT_SECONDS)+" segundo(s) para responder")
+                #print(error)
+                #client.close()
+            except socket.error as error:
+                print("ERROR" + error)
+                #client.close() #TODO Fechar a conexao e reabir ou nao?
+            if msg_received_bytes: break
+            print("Tentando uma nova requisicao...")
+
         self.counter_received += 1
         msg_received_str = msg_received_bytes.decode("utf-8")
         self.counter_bytes_received += utf8_str_bytes(msg_received_str)
