@@ -36,7 +36,19 @@ while True and (counter_loop < NUM_LOOPS):
 
     #AF_INET indica que e um protocolo de endereco IP
     #SOCK_DGRAM indica que e um protocolo da camada de transporte UDP
-    client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+    while True:
+        try:
+            client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            break
+        except socket.gaierror as error:
+            print("ERROR: Endereco de IP do server eh invalido ou nao pode ser alcancado" + str(error))
+            #saindo da execucao
+            quit()
+        except OSError as error:
+            print("ERROR: " + str(error))
+            quit()
+        time.sleep(1)
     
     random_integer_to_send = get_random_number(
         begin_number = 1, 
@@ -47,10 +59,35 @@ while True and (counter_loop < NUM_LOOPS):
     print("Numero randomico gerado enviado para o server: "+ msg_to_send)
     
     counter_bytes_sent += utf8_str_bytes(msg_to_send)
-    client.sendto(msg_to_send.encode(), ("localhost", SERVER_PORT)) 
+
+    #!CONECTANDO AO SERVER
+    while True:
+        try:
+            client.sendto(msg_to_send.encode(), ("localhost", SERVER_PORT))
+            break
+        except socket.gaierror as error:
+            print("ERROR: Endereco de IP do server eh invalido ou nao pode ser alcancado" + str(error))
+            #saindo da execucao
+            quit()
+        except OSError as error:
+            print("ERROR: " + str(error))
+            quit()
+        time.sleep(1)
     counter_sent += 1
 
-    msg_received_bytes, address_ip_server = client.recvfrom(NUM_BYTES_PACKAGES_RECEIVED)
+    while True:
+        try:
+            msg_received_bytes, address_ip_server = client.recvfrom(NUM_BYTES_PACKAGES_RECEIVED)
+            break
+        except socket.gaierror as error:
+            print("ERROR: Endereco de IP do server eh invalido ou nao pode ser alcancado" + str(error))
+            #saindo da execucao
+            quit()
+        except OSError as error:
+            print("ERROR: " + str(error))
+            quit()
+        time.sleep(1)
+    
     counter_received += 1
     msg_received_str = msg_received_bytes.decode()
     counter_bytes_received += utf8_str_bytes(msg_received_str)
@@ -59,7 +96,19 @@ while True and (counter_loop < NUM_LOOPS):
     msg_to_send = msg_received_str + " FIM "
     print("Mensagem enviada para o server: " + msg_to_send)
     counter_bytes_sent += utf8_str_bytes(msg_to_send)
-    client.sendto(msg_to_send.encode(), ("localhost", SERVER_PORT))
+
+    while True:
+        try:
+            client.sendto(msg_to_send.encode(), ("localhost", SERVER_PORT))
+            break
+        except socket.gaierror as error:
+            print("ERROR: Endereco de IP do server eh invalido ou nao pode ser alcancado" + str(error))
+            #saindo da execucao
+            quit()
+        except OSError as error:
+            print("ERROR: " + str(error))
+            quit()
+        time.sleep(1)
     counter_sent += 1
     
     #fecha o socket e da um delay de 30seg
