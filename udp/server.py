@@ -2,6 +2,7 @@ import socket
 import math
 import random
 import string
+import time
 
 # contadores de pacotes recebidos e enviados
 counter_received = 0
@@ -26,15 +27,50 @@ def random_str(chars = string.ascii_letters + string.digits, str_length=10):
 
 #AF_INET indica que e um protocolo de endereco IP
 #SOCK_DGRAM indica que e um protocolo da camada de transporte UDP
-server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-server.bind(("", SERVER_PORT))
+while True:
+    try:
+        server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        break
+    except socket.gaierror as error:
+        print("ERROR: Endereco de IP do server eh invalido ou nao pode ser alcancado" + str(error))
+        #saindo da execucao
+        quit()
+    except OSError as error:
+        print("ERROR: " + str(error))
+        quit()
+    time.sleep(1)
+
+while True:
+    try:
+        server.bind(("", SERVER_PORT))
+        break
+    except socket.gaierror as error:
+        print("ERROR: Endereco de IP do server eh invalido ou nao pode ser alcancado" + str(error))
+        #saindo da execucao
+        quit()
+    except OSError as error:
+        print("ERROR: " + str(error))
+        quit()
+    time.sleep(1)
 
 while True:
     msg_to_answer = ""
     msg_received_str = ""
 
     print('Esperando por clientes...')
-    msg_bytes, address_ip_client = server.recvfrom(NUM_BYTES_PACKAGES_RECEIVED)
+    while True:
+        try:
+            msg_bytes, address_ip_client = server.recvfrom(NUM_BYTES_PACKAGES_RECEIVED)
+            break
+        except socket.gaierror as error:
+            print("ERROR: Endereco de IP do server eh invalido ou nao pode ser alcancado" + str(error))
+            #saindo da execucao
+            quit()
+        except OSError as error:
+            print("ERROR: " + str(error))
+            quit()
+        time.sleep(1)
+    
     counter_received += 1
     msg_received_str = msg_bytes.decode()
     counter_bytes_received += utf8_str_bytes(msg_received_str)
@@ -56,11 +92,36 @@ while True:
                 msg_to_answer = "IMPAR"
 
         counter_bytes_sent += utf8_str_bytes(msg_to_answer)
-        server.sendto(msg_to_answer.encode(), address_ip_client)
+
+        while True:
+            try:
+                server.sendto(msg_to_answer.encode(), address_ip_client)
+                break
+            except socket.gaierror as error:
+                print("ERROR: Endereco de IP do server eh invalido ou nao pode ser alcancado" + str(error))
+                #saindo da execucao
+                quit()
+            except OSError as error:
+                print("ERROR: " + str(error))
+                quit()
+            time.sleep(1)
+
         counter_sent += 1
         print("Mensagem enviada para o cliente: " +  msg_to_answer)
 
-        msg_bytes, address_ip_client = server.recvfrom(NUM_BYTES_PACKAGES_RECEIVED)
+        while True:
+            try:
+                msg_bytes, address_ip_client = server.recvfrom(NUM_BYTES_PACKAGES_RECEIVED)
+                break
+            except socket.gaierror as error:
+                print("ERROR: Endereco de IP do server eh invalido ou nao pode ser alcancado" + str(error))
+                #saindo da execucao
+                quit()
+            except OSError as error:
+                print("ERROR: " + str(error))
+                quit()
+            time.sleep(1)
+        
         counter_received += 1
         msg_received_str = msg_bytes.decode()
         counter_bytes_received += utf8_str_bytes(msg_received_str)
